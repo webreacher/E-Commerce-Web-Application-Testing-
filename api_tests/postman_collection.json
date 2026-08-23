@@ -1,0 +1,75 @@
+{
+  "info": {
+    "_postman_id": "98a1a457-3f30-4be6-8800-e7d0b1a0d33e",
+    "name": "E-Commerce REST API Test Suite",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Valid Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"standard_user\",\n  \"password\": \"secret_sauce\"\n}"
+        },
+        "url": {
+          "raw": "https://dummyjson.com/auth/login",
+          "protocol": "https",
+          "host": ["dummyjson", "com"],
+          "path": ["auth", "login"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response contains token', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('token');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products - Search & Filter",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "https://dummyjson.com/products/search?q=phone",
+          "protocol": "https",
+          "host": ["dummyjson", "com"],
+          "path": ["products", "search"],
+          "query": [{ "key": "q", "value": "phone" }]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Products array is not empty', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.products.length).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}
