@@ -2,38 +2,38 @@ name: E-Commerce Automated Testing CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   test-suite:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Source Code
+      - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Setup Python Environment
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
 
-      - name: Install Project Dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Execute Pytest Suite (Headless)
         env:
-          CI: "true"
+          PYTHONPATH: ${{ github.workspace }}
         run: |
-          pytest --html=reports/execution_report.html --self-contained-html
+          python -m pytest --html=reports/execution_report.html --self-contained-html
 
       - name: Upload Test Report Artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: execution-html-report
-          path: reports/
+          name: test-execution-report
+          path: reports/execution_report.html
